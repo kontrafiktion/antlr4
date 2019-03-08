@@ -1,4 +1,4 @@
-#!python
+#!/usr/bin/env python
 __author__ = 'jszheng'
 import optparse
 import sys
@@ -83,11 +83,15 @@ if __name__ == '__main__':
     # check and load antlr generated files
     #############################################################
     # dynamic load the module and class
-    lexerName = grammar + 'Lexer'
-    parserName = grammar + 'Parser'
+
+    (grammar_package, sep, grammar_name) = grammar.rpartition(".")
+    grammar_path = grammar_package.replace(".", "/")
+
+    lexerName = grammar_name + 'Lexer'
+    parserName = grammar_name + 'Parser'
     # check if the generate file exist
-    lexer_file = lexerName + '.py'
-    parser_file = parserName + '.py'
+    lexer_file = grammar_path + "/" + lexerName + '.py'
+    parser_file = grammar_path + "/" + parserName + '.py'
     if not os.path.exists(lexer_file):
         print("[ERROR] Can't find lexer file {}!".format(lexer_file))
         print(os.path.realpath('.'))
@@ -103,12 +107,12 @@ if __name__ == '__main__':
     # print(sys.path)
 
     # print("Load Lexer {}".format(lexerName))
-    module_lexer = __import__(lexerName, globals(), locals(), lexerName)
+    module_lexer = __import__(grammar_package + "." + lexerName, globals(), locals(), lexerName)
     class_lexer = getattr(module_lexer, lexerName)
     # print(class_lexer)
 
     # print("Load Parser {}".format(parserName))
-    module_parser = __import__(parserName, globals(), locals(), parserName)
+    module_parser = __import__(grammar_package + "." + parserName, globals(), locals(), parserName)
     class_parser = getattr(module_parser, parserName)
     # print(class_parser)
 
